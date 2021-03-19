@@ -24,7 +24,6 @@ function App() {
       });
     })
     .catch((error) => {
-      console.log(error.message)
       setMessage(error.message)
       setPassword('')
       setEmail('')
@@ -76,7 +75,6 @@ function App() {
         setMessage(result.user.email)
     })
     .catch((error) => {
-      console.log(error.message)
       setMessage(error.message)
       setPassword('')
     });
@@ -89,6 +87,13 @@ function App() {
       setMessage(error.message)
     });
   }
+  const userDel = () => {
+    firebase.auth().currentUser.delete().then(function() {
+      setMessage("User deleted.")
+    }).catch(function(error) {
+      setMessage(error.message)
+    });
+  }
 
   return (
     <div className="App">
@@ -97,7 +102,12 @@ function App() {
       </header>
       <main>
         <h1 style={{ textAlign: "center"}}>create User With Email And Password</h1>
-        { user && <button onClick={userLogout}>Logout</button>}
+        { user && <button onClick={userLogout}>Logout {user?.email} ? { user?.emailVerified ? "Yes" : "No" }</button>}
+        <br />
+        <br />
+        { user && <button onClick={userDel}>Delete</button>}
+        <br />
+        <br />
         <form method="POST">
           <div>
             <label>email</label>
@@ -147,7 +157,10 @@ function App() {
         <br />
         <br />
         <br />
-        { !user?.emailVerified && <div>
+        {
+          user && 
+          !user.emailVerified && 
+          <div>
             <label>Email Verification </label>
             <button onClick={sendvEmail}>Send mail</button>
           </div>
